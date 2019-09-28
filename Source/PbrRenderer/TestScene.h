@@ -40,5 +40,7 @@ namespace PbrRenderer
 		DirectX::XMFLOAT4X4 worldMatrix;
 
 		ComPtr<ID3D11ShaderResourceView> testTexture;
+
+		std::unique_ptr<Model> modelSphere;
 	};
 }

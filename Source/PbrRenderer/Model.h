@@ -27,6 +27,17 @@ namespace PbrRenderer
 
 		void LoadDataRaw(const void* data, int vertexSize, int count);
 
+		void SetData(ComPtr<ID3D11Buffer>&& data, int stride)
+		{
+			D3D11_BUFFER_DESC desc;
+			data->GetDesc(&desc);
+
+			vertexBuffer.Reset();
+			vertexBuffer.Swap(data);
+			this->vertexSize = stride;
+			this->vertexCount = desc.ByteWidth / stride;
+		}
+
 		template <int N>
 		void LoadIndex(const std::uint16_t(&data)[N])
 		{
@@ -35,6 +46,17 @@ namespace PbrRenderer
 
 		void LoadIndexRaw(const std::uint16_t* data, int count);
 
+		void SetIndex(ComPtr<ID3D11Buffer>&& data, int stride)
+		{
+			D3D11_BUFFER_DESC desc;
+			data->GetDesc(&desc);
+
+			indexBuffer.Reset();
+			indexBuffer.Swap(data);
+			indexBufferFormat = stride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+			indexCount = desc.ByteWidth	 / stride;
+		}
+
 		void Draw(ID3D11DeviceContext* dc);
 
 	private:
@@ -42,8 +64,8 @@ namespace PbrRenderer
 		ComPtr<ID3D11Buffer> vertexBuffer;
 		ComPtr<ID3D11Buffer> indexBuffer;
 		UINT vertexSize = 0;
-		DXGI_FORMAT indexBufferFormat = DXGI_FORMAT_UNKNOWN;
 		UINT vertexCount = 0;
+		DXGI_FORMAT indexBufferFormat = DXGI_FORMAT_UNKNOWN;
 		UINT indexCount = 0;
 	};
 }

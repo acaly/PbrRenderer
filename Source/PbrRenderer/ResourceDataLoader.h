@@ -12,6 +12,7 @@ namespace PbrRenderer
 		std::uint16_t Depth; //Used for cube texture (=6) and texture3d
 		std::uint16_t Stride;
 		std::uint16_t Slice;
+		//For buffer, totalsize=stride*width
 	};
 
 	struct ResourceDataHeader
@@ -30,6 +31,8 @@ namespace PbrRenderer
 	enum class ResourceDataLoadingOption
 	{
 		ImmutableSRV,
+		ImmutableVB,
+		ImmutableIB,
 	};
 
 	class ResourceDataLoader final

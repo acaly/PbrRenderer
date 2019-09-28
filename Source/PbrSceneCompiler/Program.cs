@@ -1,4 +1,5 @@
 ﻿using PbrSceneCompiler.Imaging.Hdr;
+using PbrSceneCompiler.Model;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -15,12 +16,16 @@ namespace PbrSceneCompiler
 
         static void Main(string[] args)
         {
+            //Convert skybox texture.
             var input = Path.Combine(TestScenePath, @"Resource\473-free-hdri-skies-com.hdr");
             var output = Path.Combine(TestScenePath, @"Compiled\473-free-hdri-skies-com.srd");
             using (var file = File.OpenRead(input))
             {
                 new HdrImageLoader().Read(file).WriteSRDFile(output);
             }
+
+            //Generate
+            Sphere.WriteSRD(Path.Combine(TestScenePath, @"Compiled\sphere.vb"), Path.Combine(TestScenePath, @"Compiled\sphere.ib"));
         }
     }
 }

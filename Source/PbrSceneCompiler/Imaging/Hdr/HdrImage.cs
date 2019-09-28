@@ -70,19 +70,6 @@ namespace PbrSceneCompiler.Imaging.Hdr
             return ret;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
-        private struct HackWriteFloatArray
-        {
-            [FieldOffset(0)] public byte[] ByteArray;
-            [FieldOffset(0)] public float[] FloatArray;
-            [FieldOffset(0)] public HackWriteFloatModifyLength ModifyLength;
-        }
-
-        private class HackWriteFloatModifyLength
-        {
-            public int Length;
-        }
-
         public void WriteSRDFile(string file)
         {
             var srd = new SRDFile(file);
@@ -104,15 +91,8 @@ namespace PbrSceneCompiler.Imaging.Hdr
                 },
             });
             srd.WriteOffset(0);
-
-            //.NET does not allow us to write float[]. We make a fake byte[] using explicit-layout struct.
-            HackWriteFloatArray conv = new HackWriteFloatArray
-            {
-                FloatArray = RawData
-            };
-            conv.ModifyLength.Length *= 4;
-            srd.GetWriter().Write(conv.ByteArray, 0, RawData.Length);
-            conv.ModifyLength.Length /= 4;
+            srd.Write(RawData);
+            srd.Close();
         }
     }
 }

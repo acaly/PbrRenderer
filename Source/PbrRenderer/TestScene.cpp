@@ -101,7 +101,7 @@ void PbrRenderer::TestScene::Initialize()
 
 	pipeline->SetShaderFromFile(ShaderType::Vertex, PRECOMPILED_SHADER_PATH("TestScene_TestVS.cso"));
 	pipeline->SetShaderFromFile(ShaderType::Pixel, PRECOMPILED_SHADER_PATH("TestScene_TestPS.cso"));
-	pipeline->SetRasterizer({ D3D11_FILL_SOLID, D3D11_CULL_FRONT });
+	pipeline->SetRasterizer({ D3D11_FILL_SOLID, D3D11_CULL_NONE });
 
 	CD3D11_BUFFER_DESC bufferDesc(sizeof(ConstantBuffer), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	CheckComError(renderingSystem->device->CreateBuffer(&bufferDesc, nullptr, constantBuffer.ReleaseAndGetAddressOf()));
@@ -117,6 +117,19 @@ void PbrRenderer::TestScene::Initialize()
 	ComPtr<ID3D11Texture2D> unused_ptr;
 	ResourceDataLoader::LoadTexture2D(renderingSystem->device.Get(), texture_file, ResourceDataLoadingOption::ImmutableSRV,
 		unused_ptr.GetAddressOf(), testTexture.GetAddressOf());
+
+	modelSphere = std::make_unique<Model>(renderingSystem);
+
+	ComPtr<ID3D11Buffer> sphere_vb, sphere_ib;
+	ComPtr<ID3D11ShaderResourceView> unused_srv;
+	std::ifstream sphere_vb_file(TEST_SCENE_PATH("Compiled/sphere.vb"), std::ios::in | std::ios::binary);
+	ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_vb_file, ResourceDataLoadingOption::ImmutableVB,
+		sphere_vb.GetAddressOf(), unused_srv.GetAddressOf());
+	std::ifstream sphere_ib_file(TEST_SCENE_PATH("Compiled/sphere.ib"), std::ios::in | std::ios::binary);
+	ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_ib_file, ResourceDataLoadingOption::ImmutableIB,
+		sphere_ib.GetAddressOf(), unused_srv.GetAddressOf());
+	modelSphere->SetData(std::move(sphere_vb), 32);
+	modelSphere->SetIndex(std::move(sphere_ib), 2);
 }
 
 void PbrRenderer::TestScene::Render()
@@ -143,8 +156,9 @@ void PbrRenderer::TestScene::Render()
 	memcpy(mapped.pData, &sceneParameters, sizeof(ConstantBuffer));
 	context->Unmap(constantBuffer.Get(), 0);
 
-	modelGround->Draw(context.Get());
-	modelBox->Draw(context.Get());
+	//modelGround->Draw(context.Get());
+	//modelBox->Draw(context.Get());
+	modelSphere->Draw(context.Get());
 }
 
 void PbrRenderer::TestScene::OnEventBefore(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)

@@ -36,6 +36,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +48,8 @@
     <Compile Include="Imaging\Hdr\HdrImage.cs" />
     <Compile Include="Imaging\Hdr\HdrImageLoader.cs" />
     <Compile Include="Imaging\SRDFile.cs" />
+    <Compile Include="Model\SegmentedCylinder.cs" />
+    <Compile Include="Model\Sphere.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\CSharpScriptLoader.cs" />

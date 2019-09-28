@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -84,6 +85,33 @@ namespace PbrSceneCompiler.Imaging
             _file.Flush();
             _bw.Close();
             _file.Close();
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct HackWriteFloatArray
+        {
+            [FieldOffset(0)] public byte[] ByteArray;
+            [FieldOffset(0)] public Array SourceArray;
+            [FieldOffset(0)] public HackWriteFloatModifyLength ModifyLength;
+        }
+
+        private class HackWriteFloatModifyLength
+        {
+            public int Length;
+        }
+
+        public void Write<T>(T[] data) where T : unmanaged
+        {
+            var len = Marshal.SizeOf<T>();
+
+            //.NET does not allow us to write float[]. We make a fake byte[] using explicit-layout struct.
+            var conv = new HackWriteFloatArray
+            {
+                SourceArray = data
+            };
+            conv.ModifyLength.Length *= len;
+            GetWriter().Write(conv.ByteArray, 0, conv.ModifyLength.Length);
+            conv.ModifyLength.Length /= len;
         }
     }
 }
