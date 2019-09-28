@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace PbrSceneCompiler.Imaging.Hdr
 {
-    class HdrImage
+    class HdrImage : SoftwareImage<R32G32B32A32F>
     {
-        public int Width, Height;
-        public float[] RawData;
+        public HdrImage(int w, int h) : base(w, h, new R32G32B32A32FTransformer())
+        {
+        }
 
         public Bitmap CreateGrayFromLogAlpha()
         {
@@ -20,10 +21,8 @@ namespace PbrSceneCompiler.Imaging.Hdr
             {
                 for (int x = 0; x < Width; ++x)
                 {
-                    var r = RawData[0 + x * 3 + y * Width * 3];
-                    var g = RawData[1 + x * 3 + y * Width * 3];
-                    var b = RawData[2 + x * 3 + y * Width * 3];
-                    var c = Math.Max(r, Math.Max(g, b));
+                    var p = GetPixel(x, y);
+                    var c = Math.Max(p.R, Math.Max(p.G, p.B));
                     var f = (int)(Math.Log10(c) * 3 + 128);
                     ret.SetPixel(x, y, Color.FromArgb(f, f, f));
                 }
@@ -38,32 +37,27 @@ namespace PbrSceneCompiler.Imaging.Hdr
             {
                 for (int x = 0; x < Width; ++x)
                 {
-                    var r = RawData[0 + x * 3 + y * Width * 3];
-                    var g = RawData[1 + x * 3 + y * Width * 3];
-                    var b = RawData[2 + x * 3 + y * Width * 3];
-                    var fr = (int)(Math.Log10(r) * 30 + 128);
-                    var fg = (int)(Math.Log10(g) * 30 + 128);
-                    var fb = (int)(Math.Log10(b) * 30 + 128);
+                    var p = GetPixel(x, y);
+                    var fr = (int)(Math.Log10(p.R) * 30 + 128);
+                    var fg = (int)(Math.Log10(p.G) * 30 + 128);
+                    var fb = (int)(Math.Log10(p.B) * 30 + 128);
                     ret.SetPixel(x, y, Color.FromArgb(fr, fg, fb));
                 }
             }
             return ret;
         }
 
-        public Bitmap CreateLinearBitmap()
+        public Bitmap CreateLinearBitmap(float factor = 1)
         {
-            var max = RawData.Max() / 100;
             var ret = new Bitmap(Width, Height);
             for (int y = 0; y < Height; ++y)
             {
                 for (int x = 0; x < Width; ++x)
                 {
-                    var r = RawData[0 + x * 3 + y * Width * 3];
-                    var g = RawData[1 + x * 3 + y * Width * 3];
-                    var b = RawData[2 + x * 3 + y * Width * 3];
-                    var fr = Math.Min((int)(r / max * 255), 255);
-                    var fg = Math.Min((int)(g / max * 255), 255);
-                    var fb = Math.Min((int)(b / max * 255), 255);
+                    var p = GetPixel(x, y);
+                    var fr = Math.Min((int)(p.R * factor * 255), 255);
+                    var fg = Math.Min((int)(p.G * factor * 255), 255);
+                    var fb = Math.Min((int)(p.B * factor * 255), 255);
                     ret.SetPixel(x, y, Color.FromArgb(fr, fg, fb));
                 }
             }
@@ -76,7 +70,7 @@ namespace PbrSceneCompiler.Imaging.Hdr
             srd.WriteHeaders(new SRDFileHeader
             {
                 Magic = SRDFile.Magic[2],
-                Format = 6 /* DXGI_FORMAT_R32G32B32_FLOAT */,
+                Format = 2 /* DXGI_FORMAT_R32G32B32A32_FLOAT */,
                 MipLevel = 1,
                 ArraySize = 1,
             }, new[] {
@@ -86,7 +80,7 @@ namespace PbrSceneCompiler.Imaging.Hdr
                     Width = (ushort)Width,
                     Height = (ushort)Height,
                     Depth = 1,
-                    Stride = (ushort)(12 * Width),
+                    Stride = (ushort)(16 * Width),
                     Slice = 0,
                 },
             });

@@ -29,15 +29,13 @@ namespace PbrSceneCompiler.Imaging.Hdr
 
         private void ReadHeader()
         {
-            _data = new HdrImage();
             while (true)
             {
                 var line = ReadHeaderLine();
                 if (line.Length > 0 && (line[0] == '+' || line[0] == '-'))
                 {
                     var xy = line.Split(' ');
-                    _data.Width = int.Parse(xy[3]);
-                    _data.Height = int.Parse(xy[1]);
+                    _data = new HdrImage(int.Parse(xy[3]), int.Parse(xy[1]));
                     break;
                 }
             }
@@ -46,7 +44,6 @@ namespace PbrSceneCompiler.Imaging.Hdr
         private void ReadData()
         {
             _scanline = new byte[4 * _data.Width];
-            _data.RawData = new float[3 * _data.Width * _data.Height];
             for (int i = 0; i < _data.Height; ++i)
             {
                 ReadScanline();
@@ -75,16 +72,14 @@ namespace PbrSceneCompiler.Imaging.Hdr
 
         private void CopyScanline(int y)
         {
-            var dataStride = 3 * _data.Width;
+            var dataStride = _data.Width;
             for (int x = 0; x < _data.Width; ++x)
             {
-                ConvertColor(x * 4, x * 3 + dataStride * y);
+                ConvertColor(x * 4, x, y);
             }
         }
 
-        private int lastWrite = 0;
-
-        private void ConvertColor(int srcOffset, int destOffset)
+        private void ConvertColor(int srcOffset, int x, int y)
         {
             int r = _scanline[srcOffset + 0];
             int g = _scanline[srcOffset + 1];
@@ -92,21 +87,18 @@ namespace PbrSceneCompiler.Imaging.Hdr
             int e = _scanline[srcOffset + 3];
             if (e == 0)
             {
-                _data.RawData[destOffset + 0] = 0;
-                _data.RawData[destOffset + 1] = 0;
-                _data.RawData[destOffset + 2] = 0;
+                _data.GetPixel(x, y) = new R32G32B32A32F { A = 1 };
             }
             else
             {
                 var f = (float)Math.Pow(2, e - 128 - 8);
-                _data.RawData[destOffset + 0] = r * f;
-                _data.RawData[destOffset + 1] = g * f;
-                _data.RawData[destOffset + 2] = b * f;
-                lastWrite = destOffset;
-                if (lastWrite == 25165812)
+                _data.GetPixel(x, y) = new R32G32B32A32F
                 {
-
-                }
+                    R = r * f,
+                    G = g * f,
+                    B = b * f,
+                    A = 1,
+                };
             }
         }
 

@@ -23,7 +23,7 @@ namespace PbrSceneCompiler.Imaging
         public ushort Height;
         public ushort Depth;
         public ushort Stride;
-        public ushort Slice;
+        public uint Slice;
     }
 
     class SRDFile
@@ -69,7 +69,7 @@ namespace PbrSceneCompiler.Imaging
 
         public void WriteOffset(int i)
         {
-            _file.Position = 12 + 14 * i;
+            _file.Position = 12 + 16 * i;
             _bw.Write((uint)_file.Length);
             _file.Seek(0, SeekOrigin.End);
         }

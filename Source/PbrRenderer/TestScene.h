@@ -42,5 +42,9 @@ namespace PbrRenderer
 		ComPtr<ID3D11ShaderResourceView> testTexture;
 
 		std::unique_ptr<Model> modelSphere;
+
+		ComPtr<ID3D11ShaderResourceView> testCubeTexture;
+
+		ComPtr<ID3D11SamplerState> sampler;
 	};
 }

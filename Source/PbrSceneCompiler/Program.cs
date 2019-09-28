@@ -1,4 +1,6 @@
-﻿using PbrSceneCompiler.Imaging.Hdr;
+﻿using PbrSceneCompiler.Imaging;
+using PbrSceneCompiler.Imaging.Hdr;
+using PbrSceneCompiler.Imaging.Transforming;
 using PbrSceneCompiler.Model;
 using System;
 using System.CodeDom.Compiler;
@@ -17,11 +19,12 @@ namespace PbrSceneCompiler
         static void Main(string[] args)
         {
             //Convert skybox texture.
-            var input = Path.Combine(TestScenePath, @"Resource\473-free-hdri-skies-com.hdr");
-            var output = Path.Combine(TestScenePath, @"Compiled\473-free-hdri-skies-com.srd");
-            using (var file = File.OpenRead(input))
+            using (var file = File.OpenRead(Path.Combine(TestScenePath, @"Resource\473-free-hdri-skies-com.hdr")))
             {
-                new HdrImageLoader().Read(file).WriteSRDFile(output);
+                var image = new HdrImageLoader().Read(file);
+                image.WriteSRDFile(Path.Combine(TestScenePath, @"Compiled\473-free-hdri-skies-com.srd"));
+                var cubeImages = new SkyboxSphericalToCube<R32G32B32A32F>(image).Generate(256);
+                SkyboxSphericalToCube<R32G32B32A32F>.WriteSRD(new SRDFile(Path.Combine(TestScenePath, @"Compiled\sphere_cube.srd")), cubeImages);
             }
 
             //Generate

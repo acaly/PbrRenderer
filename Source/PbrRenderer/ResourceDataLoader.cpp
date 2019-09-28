@@ -57,6 +57,8 @@ void PbrRenderer::ResourceDataLoader::LoadBuffer(ID3D11Device* device, std::istr
 	case ResourceDataLoadingOption::ImmutableIB:
 		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		break;
+	default:
+		throw std::exception("invalid resource loading option");
 	}
 	D3D11_SUBRESOURCE_DATA data_desc = { data.get() + segments->Offset, 0, 0 };
 	ComPtr<ID3D11Buffer> texPtr;
@@ -82,11 +84,17 @@ void PbrRenderer::ResourceDataLoader::LoadTexture2D(ID3D11Device* device, std::i
 	{
 		throw std::exception("invalid Texture2D file");
 	}
+	if (header->MipLevel != 1 || header->ArraySize != 1)
+	{
+		throw "not implemented";
+	}
 	CD3D11_TEXTURE2D_DESC desc((DXGI_FORMAT)header->Format, segments[0].Width, segments[0].Height, header->ArraySize, header->MipLevel);
 	switch (option)
 	{
 	case ResourceDataLoadingOption::ImmutableSRV:
 		break;
+	default:
+		throw std::exception("invalid resource loading option");
 	}
 	auto subresource_count = header->ArraySize * header->MipLevel;
 	auto data_desc = std::make_unique<D3D11_SUBRESOURCE_DATA[]>(subresource_count);
@@ -99,6 +107,52 @@ void PbrRenderer::ResourceDataLoader::LoadTexture2D(ID3D11Device* device, std::i
 	CheckComError(device->CreateTexture2D(&desc, data_desc.get(), texPtr.GetAddressOf()));
 	ComPtr<ID3D11ShaderResourceView> srvPtr;
 	CheckComError(device->CreateShaderResourceView(texPtr.Get(), nullptr, srvPtr.GetAddressOf()));
+	*buffer = texPtr.Detach();
+	*srv = srvPtr.Detach();
+}
+
+void PbrRenderer::ResourceDataLoader::LoadTextureCube(ID3D11Device* device, std::istream& stream, ResourceDataLoadingOption option,
+	ID3D11Texture2D** buffer, ID3D11ShaderResourceView** srv)
+{
+	//TODO check the order of array elements, mipmaps, and cube map faces
+	//Here we assume single element, single mipmap
+	*buffer = 0;
+	*srv = 0;
+	auto data = read_all_bytes(stream);
+	auto header = (ResourceDataHeader*)data.get();
+	auto segments = (ResourceDataSegmentInfo*)(data.get() + 12);
+	if (header->Magic != ResourceDataHeader::MagicT2D)
+	{
+		throw std::exception("invalid TextureCube file");
+	}
+	if (header->MipLevel != 1 || header->ArraySize != 1)
+	{
+		throw "not implemented";
+	}
+	CD3D11_TEXTURE2D_DESC desc((DXGI_FORMAT)header->Format, segments[0].Width, segments[0].Height, 6 * header->ArraySize, header->MipLevel);
+	desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
+	CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURECUBE, (DXGI_FORMAT)header->Format); //TODO we need more arguments for array and mipmap
+	switch (option)
+	{
+	case ResourceDataLoadingOption::ImmutableSRV:
+		break;
+	default:
+		throw std::exception("invalid resource loading option");
+	}
+	auto subresource_count = header->ArraySize * header->MipLevel * 6;
+	auto data_desc = std::make_unique<D3D11_SUBRESOURCE_DATA[]>(subresource_count);
+	for (int i = 0; i < subresource_count / 6; ++i)
+	{
+		for (int j = 0; j < 6; ++j)
+		{
+			data_desc[i * 6 + j].pSysMem = data.get() + segments[i].Offset + segments[i].Slice * j;
+			data_desc[i * 6 + j].SysMemPitch = segments[i].Stride;
+		}
+	}
+	ComPtr<ID3D11Texture2D> texPtr;
+	CheckComError(device->CreateTexture2D(&desc, data_desc.get(), texPtr.GetAddressOf()));
+	ComPtr<ID3D11ShaderResourceView> srvPtr;
+	CheckComError(device->CreateShaderResourceView(texPtr.Get(), &srvDesc, srvPtr.GetAddressOf()));
 	*buffer = texPtr.Detach();
 	*srv = srvPtr.Detach();
 }

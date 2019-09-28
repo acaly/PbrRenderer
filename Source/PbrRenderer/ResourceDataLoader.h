@@ -11,7 +11,7 @@ namespace PbrRenderer
 		std::uint16_t Height;
 		std::uint16_t Depth; //Used for cube texture (=6) and texture3d
 		std::uint16_t Stride;
-		std::uint16_t Slice;
+		std::uint32_t Slice;
 		//For buffer, totalsize=stride*width
 	};
 
@@ -43,6 +43,8 @@ namespace PbrRenderer
 		static void LoadBuffer(ID3D11Device* device, std::istream& stream, ResourceDataLoadingOption option,
 			ID3D11Buffer** buffer, ID3D11ShaderResourceView** srv);
 		static void LoadTexture2D(ID3D11Device* device, std::istream& stream, ResourceDataLoadingOption option,
+			ID3D11Texture2D** buffer, ID3D11ShaderResourceView** srv);
+		static void LoadTextureCube(ID3D11Device* device, std::istream& stream, ResourceDataLoadingOption option,
 			ID3D11Texture2D** buffer, ID3D11ShaderResourceView** srv);
 		//TODO LoadTexture1D LoadTextureCube LoadTexture3D
 	};
