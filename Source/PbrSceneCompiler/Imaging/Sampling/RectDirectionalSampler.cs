@@ -13,7 +13,7 @@ namespace PbrSceneCompiler.Imaging.Sampling
         public RectDirectionalSampler(Random rand, Vector3 center, float r, int n)
         {
             _center = Vector3.Normalize(center);
-            _r = (float)Math.Tan(r);
+            r = (float)Math.Tan(r);
             _n = n;
             _rand = rand;
             CalculateXY(_center, out _x, out _y);
@@ -23,7 +23,6 @@ namespace PbrSceneCompiler.Imaging.Sampling
         }
 
         private readonly Vector3 _center;
-        private readonly float _r;
         private readonly int _n;
 
         private readonly Vector3 _x;

@@ -3,6 +3,7 @@ cbuffer Constants : register(b0)
 {
 	float4x4 mWorld;
 	float4x4 mViewProj;
+	float4 mViewPosition;
 }
 
 Texture2D faceTexture : register(t0);
@@ -21,13 +22,14 @@ struct PS_INPUT
 	float4 Pos : SV_POSITION;
 	float3 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;
-	float Color : Color;
+	float3 ViewDir : POSITION;
 };
 
 PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT)0;
 	output.Pos = mul(input.Pos, mWorld);
+	output.ViewDir = output.Pos - mViewPosition;
 	output.Pos = mul(output.Pos, mViewProj);
 	output.Normal = mul(input.Normal, (float3x3)mWorld);
 	output.TexCoord = input.TexCoord;
@@ -37,7 +39,8 @@ PS_INPUT VS(VS_INPUT input)
 
 float4 PS(PS_INPUT input) : SV_Target
 {
-	return testSkyMap.Sample(textureSampler, input.Normal.xyz) + float4(0.1, 0.1, 0.1, 0);
+	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
+	return testSkyMap.Sample(textureSampler, reflectionDir.xyz) + float4(0.1, 0.1, 0.1, 0);
 	//return faceTexture.Sample(textureSampler, input.TexCoord.xy);
 
 	//

@@ -54,6 +54,11 @@ namespace PbrRenderer
 			return DirectX::XMLoadFloat4x4(&mProj);
 		}
 
+		DirectX::XMVECTOR GetEyePosition() const
+		{
+			return DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&target), DirectX::XMLoadFloat3(&offset));
+		}
+
 	private:
 		float yaw = 0, pitch = 0, length = 10;
 

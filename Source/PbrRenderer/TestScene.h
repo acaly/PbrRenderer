@@ -25,6 +25,7 @@ namespace PbrRenderer
 		{
 			DirectX::XMMATRIX worldMatrix;
 			DirectX::XMMATRIX viewProjMatrix;
+			DirectX::XMVECTOR viewPos;
 		};
 
 	private:

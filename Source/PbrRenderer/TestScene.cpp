@@ -171,15 +171,21 @@ void PbrRenderer::TestScene::Render()
 	{
 		XMLoadFloat4x4(&worldMatrix),
 		XMMatrixTranspose(XMMatrixMultiply(camera.GetViewMatrix(), camera.GetProjectionMatrix())),
+		camera.GetEyePosition(),
 	};
-
 	D3D11_MAPPED_SUBRESOURCE mapped;
 	CheckComError(context->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped));
 	memcpy(mapped.pData, &sceneParameters, sizeof(ConstantBuffer));
 	context->Unmap(constantBuffer.Get(), 0);
 
-	//modelGround->Draw(context.Get());
-	//modelBox->Draw(context.Get());
+	modelGround->Draw(context.Get());
+	modelBox->Draw(context.Get());
+
+	sceneParameters.worldMatrix = XMMatrixTranspose(XMMatrixTranslation(1.5f, 0, 0));
+	CheckComError(context->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped));
+	memcpy(mapped.pData, &sceneParameters, sizeof(ConstantBuffer));
+	context->Unmap(constantBuffer.Get(), 0);
+
 	modelSphere->Draw(context.Get());
 }
 
