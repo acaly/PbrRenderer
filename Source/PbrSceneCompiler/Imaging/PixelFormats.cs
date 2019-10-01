@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,11 @@ namespace PbrSceneCompiler.Imaging
                 A = val.A,
             };
         }
+
+        public Color ToColor(R8G8B8A8 val)
+        {
+            return Color.FromArgb(val.A, val.R, val.G, val.B);
+        }
     }
 
     struct R32G32B32A32F
@@ -67,6 +73,15 @@ namespace PbrSceneCompiler.Imaging
                 B = val.B * factor,
                 A = val.A,
             };
+        }
+
+        public Color ToColor(R32G32B32A32F val)
+        {
+            var a = (int)Math.Min(255, val.A * 255);
+            var r = (int)Math.Min(255, val.R * 255);
+            var g = (int)Math.Min(255, val.G * 255);
+            var b = (int)Math.Min(255, val.B * 255);
+            return Color.FromArgb(a, r, g, b);
         }
     }
 }

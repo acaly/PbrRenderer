@@ -49,10 +49,14 @@
     <Compile Include="Imaging\Hdr\HdrImage.cs" />
     <Compile Include="Imaging\Hdr\HdrImageLoader.cs" />
     <Compile Include="Imaging\PixelFormats.cs" />
+    <Compile Include="Imaging\Sampling\CircleDirectionalSampler.cs" />
     <Compile Include="Imaging\Sampling\RectDirectionalSampler.cs" />
+    <Compile Include="Imaging\Sampling\SphereDirectionalSampler.cs" />
     <Compile Include="Imaging\SoftwareImage.cs" />
     <Compile Include="Imaging\SRDFile.cs" />
-    <Compile Include="Imaging\Transforming\SkyboxSphericalToCube.cs" />
+    <Compile Include="Imaging\Transforming\HalfSize.cs" />
+    <Compile Include="Imaging\Transforming\SkyboxLambertianDiffuseFilter.cs" />
+    <Compile Include="Imaging\Transforming\SkyboxUniformCircleFilter.cs" />
     <Compile Include="Model\SegmentedCylinder.cs" />
     <Compile Include="Model\Sphere.cs" />
     <Compile Include="Program.cs" />

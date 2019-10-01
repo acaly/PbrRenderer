@@ -63,30 +63,5 @@ namespace PbrSceneCompiler.Imaging.Hdr
             }
             return ret;
         }
-
-        public void WriteSRDFile(string file)
-        {
-            var srd = new SRDFile(file);
-            srd.WriteHeaders(new SRDFileHeader
-            {
-                Magic = SRDFile.Magic[2],
-                Format = 2 /* DXGI_FORMAT_R32G32B32A32_FLOAT */,
-                MipLevel = 1,
-                ArraySize = 1,
-            }, new[] {
-                new SRDSegmentHeader
-                {
-                    Offset = 0,
-                    Width = (ushort)Width,
-                    Height = (ushort)Height,
-                    Depth = 1,
-                    Stride = (ushort)(16 * Width),
-                    Slice = 0,
-                },
-            });
-            srd.WriteOffset(0);
-            srd.Write(RawData);
-            srd.Close();
-        }
     }
 }

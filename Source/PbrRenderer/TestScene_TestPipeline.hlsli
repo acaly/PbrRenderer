@@ -7,7 +7,8 @@ cbuffer Constants : register(b0)
 }
 
 Texture2D faceTexture : register(t0);
-TextureCube testSkyMap : register(t1);
+TextureCube diffuseSkyMap : register(t1);
+TextureCube specularSkyMap : register(t2);
 SamplerState textureSampler : register(s0);
 
 struct VS_INPUT
@@ -25,11 +26,13 @@ struct PS_INPUT
 	float3 ViewDir : POSITION;
 };
 
+static const float3 Fresnel_F0 = float3(0.345, 0.369, 0.426);
+
 PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT)0;
 	output.Pos = mul(input.Pos, mWorld);
-	output.ViewDir = output.Pos - mViewPosition;
+	output.ViewDir = (output.Pos - mViewPosition).xyz;
 	output.Pos = mul(output.Pos, mViewProj);
 	output.Normal = mul(input.Normal, (float3x3)mWorld);
 	output.TexCoord = input.TexCoord;
@@ -39,16 +42,17 @@ PS_INPUT VS(VS_INPUT input)
 
 float4 PS(PS_INPUT input) : SV_Target
 {
-	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
-	return testSkyMap.Sample(textureSampler, reflectionDir.xyz) + float4(0.1, 0.1, 0.1, 0);
-	//return faceTexture.Sample(textureSampler, input.TexCoord.xy);
+	//For diffuse
+	float3 diffuseColor = diffuseSkyMap.Sample(textureSampler, input.Normal).xyz * 3;
 
-	//
-	//float4 pos = input.Pos;
-	//if (input.TexCoord.x > 0.9 || input.TexCoord.x < 0.1 ||
-	//	input.TexCoord.y > 0.9 || input.TexCoord.y < 0.1)
-	//{
-	//	return float4(0.5, 0.5, 0.5, 1);
-	//}
-	//return float4(1, 1, 1, 1);
+	//For reflection
+	float3 l = -normalize(input.ViewDir);
+	float nl = dot(input.Normal, l);
+	float x_1_nl = 1 - nl;
+	float x_1_nl_2 = x_1_nl * x_1_nl;
+	float3 fresnel_factor = Fresnel_F0 + (float3(1, 1, 1) - Fresnel_F0) * x_1_nl_2 * x_1_nl_2 * x_1_nl;
+	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
+	float3 specularColor = specularSkyMap.Sample(textureSampler, reflectionDir).xyz * fresnel_factor * 3;
+
+	return float4(specularColor + diffuseColor, 1);
 }

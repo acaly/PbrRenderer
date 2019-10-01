@@ -3,22 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PbrSceneCompiler.Imaging.Transforming
 {
-    class SkyboxSphericalToCube<T> where T : unmanaged
+    class SkyboxLambertianDiffuseFilter<T> where T : unmanaged
     {
         private readonly SoftwareImage<T> _image;
 
-        public SkyboxSphericalToCube(SoftwareImage<T> image)
+        public SkyboxLambertianDiffuseFilter(SoftwareImage<T> image)
         {
             _image = image;
         }
 
-        public SoftwareImage<T>[] Generate(int newSize)
+        public SoftwareImage<T>[] Generate(int newSize, int nSample)
         {
             var faces = new SoftwareImage<T>[6];
             faces[0] = new SoftwareImage<T>(newSize, newSize, _image.PixelTransformer);
@@ -36,23 +35,18 @@ namespace PbrSceneCompiler.Imaging.Transforming
                 {
                     for (int x = 0; x < newSize; ++x)
                     {
-                        //1. calculate center and a radius
-                        //2. randomly generate samples within that radus
-                        //   use stratify method and jittering
-                        //3. check whether the sample is in the pixel (by scaling the already known maximum dimension to 1)
-                        //4. if check succeeds, write the point sample to destination
                         var center = GetCenter(newSize, x, y, z);
-                        var r = (float)Math.Atan(0.5 / newSize) * 0.8f;
-                        var sampler = new RectDirectionalSampler(rand, center, r, 4);
+                        center = Vector3.Normalize(center);
+
+                        var sampler = new SphereDirectionalSampler(rand, center, (float)Math.PI / 2, nSample);
                         T total = default;
-                        for (int sample = 0; sample < 16; ++sample)
+                        for (int sample = 0; sample < sampler.SampleCount; ++sample)
                         {
                             var sampleDir = sampler.Sample(sample);
-                            //TODO check in range
                             var color = SampleOriginal(sampleDir);
-                            total = p.Add(total, color);
+                            total = p.Add(total, p.Scale(color, Vector3.Dot(center, sampleDir)));
                         }
-                        faces[z].GetPixel(x, y) = p.Scale(total, 1 / 16f);
+                        faces[z].GetPixel(x, y) = p.Scale(total, 1f / sampler.SampleCount);
                     }
                 }
             }
@@ -85,37 +79,6 @@ namespace PbrSceneCompiler.Imaging.Transforming
             var v = (int)Math.Floor(Math.Atan2(xy, dir.Z) / Math.PI * _image.Height);
             if (v == _image.Height) v -= 1;
             return _image.GetPixel(u, v);
-        }
-
-        //TODO move this to a common helper class
-        public static void WriteSRD(SRDFile file, SoftwareImage<T>[] faces)
-        {
-            var size = faces[0].Width;
-            file.WriteHeaders(new SRDFileHeader
-            {
-                Magic = SRDFile.Magic[2],
-                Format = faces[0].PixelTransformer.DXGIFormat,
-                MipLevel = 1,
-                ArraySize = 1,
-            }, new[] {
-                new SRDSegmentHeader
-                {
-                    Offset = 0,
-                    Width = (ushort)size,
-                    Height = (ushort)size,
-                    Depth = 6,
-                    Stride = (ushort)(Marshal.SizeOf<T>() * size),
-                    Slice = (uint)(Marshal.SizeOf<T>() * size * size),
-                },
-            });
-            file.WriteOffset(0);
-            file.Write(faces[0].RawData);
-            file.Write(faces[1].RawData);
-            file.Write(faces[2].RawData);
-            file.Write(faces[3].RawData);
-            file.Write(faces[4].RawData);
-            file.Write(faces[5].RawData);
-            file.Close();
         }
     }
 }

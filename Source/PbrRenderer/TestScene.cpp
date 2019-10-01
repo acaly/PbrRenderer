@@ -137,15 +137,21 @@ void PbrRenderer::TestScene::Initialize()
 	}
 
 	{
-		std::ifstream cube_texture_file(TEST_SCENE_PATH("Compiled/sphere_cube.srd"), std::ios::in | std::ios::binary);
+		std::ifstream cube_texture_file(TEST_SCENE_PATH("Compiled/sphere_cube_diffuse.srd"), std::ios::in | std::ios::binary);
 		ComPtr<ID3D11Texture2D> unused_buffer;
 		ResourceDataLoader::LoadTextureCube(renderingSystem->device.Get(), cube_texture_file, ResourceDataLoadingOption::ImmutableSRV,
-			unused_buffer.GetAddressOf(), testCubeTexture.GetAddressOf());
+			unused_buffer.GetAddressOf(), diffuseCubeTexture.GetAddressOf());
+	}
+	{
+		std::ifstream cube_texture_file(TEST_SCENE_PATH("Compiled/sphere_cube_specular.srd"), std::ios::in | std::ios::binary);
+		ComPtr<ID3D11Texture2D> unused_buffer;
+		ResourceDataLoader::LoadTextureCube(renderingSystem->device.Get(), cube_texture_file, ResourceDataLoadingOption::ImmutableSRV,
+			unused_buffer.GetAddressOf(), specularCubeTexture.GetAddressOf());
 	}
 
 	{
 		D3D11_SAMPLER_DESC desc = {
-			D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+			D3D11_FILTER_ANISOTROPIC,
 			D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP,
 		};
 		CheckComError(renderingSystem->device->CreateSamplerState(&desc, sampler.GetAddressOf()));
@@ -164,7 +170,8 @@ void PbrRenderer::TestScene::Render()
 	pipeline->Attach(context.Get());
 
 	context->PSSetShaderResources(0, 1, testTexture.GetAddressOf());
-	context->PSSetShaderResources(1, 1, testCubeTexture.GetAddressOf());
+	context->PSSetShaderResources(1, 1, diffuseCubeTexture.GetAddressOf());
+	context->PSSetShaderResources(2, 1, specularCubeTexture.GetAddressOf());
 	context->PSSetSamplers(0, 1, sampler.GetAddressOf());
 
 	ConstantBuffer sceneParameters =
@@ -181,7 +188,7 @@ void PbrRenderer::TestScene::Render()
 	modelGround->Draw(context.Get());
 	modelBox->Draw(context.Get());
 
-	sceneParameters.worldMatrix = XMMatrixTranspose(XMMatrixTranslation(1.5f, 0, 0));
+	sceneParameters.worldMatrix = XMMatrixTranspose(XMMatrixTranslation(0, 1.5f, 0));
 	CheckComError(context->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped));
 	memcpy(mapped.pData, &sceneParameters, sizeof(ConstantBuffer));
 	context->Unmap(constantBuffer.Get(), 0);
