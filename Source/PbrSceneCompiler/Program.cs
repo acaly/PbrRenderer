@@ -23,6 +23,10 @@ namespace PbrSceneCompiler
             {
                 SoftwareImage<R32G32B32A32F> image = new HdrImageLoader().Read(file);
                 {
+                    var cubeImages = new SkyboxUniformCircleFilter<R32G32B32A32F>(image).Generate(32);
+                    SoftwareImage<R32G32B32A32F>.WriteSRDFileCube(Path.Combine(TestScenePath, @"Compiled\sphere_cube_specular.srd"), cubeImages);
+                }
+                {
                     var s1 = new HalfSize<R32G32B32A32F>(image).Generate();
                     s1 = new HalfSize<R32G32B32A32F>(s1).Generate();
                     s1 = new HalfSize<R32G32B32A32F>(s1).Generate();
@@ -31,10 +35,6 @@ namespace PbrSceneCompiler
                     image = s1;
                 }
                 image.WriteSRDFile(Path.Combine(TestScenePath, @"Compiled\473-free-hdri-skies-com.srd"));
-                {
-                    var cubeImages = new SkyboxUniformCircleFilter<R32G32B32A32F>(image).Generate(16);
-                    SoftwareImage<R32G32B32A32F>.WriteSRDFileCube(Path.Combine(TestScenePath, @"Compiled\sphere_cube_specular.srd"), cubeImages);
-                }
                 {
                     var cubeImages = new SkyboxLambertianDiffuseFilter<R32G32B32A32F>(image).Generate(16, 64);
                     for (int i = 0; i < 6; ++i)
@@ -47,7 +47,11 @@ namespace PbrSceneCompiler
             }
 
             //Generate model.
-            Sphere.WriteSRD(Path.Combine(TestScenePath, @"Compiled\sphere.vb"), Path.Combine(TestScenePath, @"Compiled\sphere.ib"));
+            //Sphere.WriteSRD(Path.Combine(TestScenePath, @"Compiled\sphere.vb"), Path.Combine(TestScenePath, @"Compiled\sphere.ib"));
+            {
+                var model = Sphere.Generate();
+                model.WriteSRD(Path.Combine(TestScenePath, @"Compiled\sphere.vb"), Path.Combine(TestScenePath, @"Compiled\sphere.ib"));
+            }
         }
     }
 }

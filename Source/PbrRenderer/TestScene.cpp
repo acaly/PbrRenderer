@@ -128,12 +128,12 @@ void PbrRenderer::TestScene::Initialize()
 		ComPtr<ID3D11ShaderResourceView> unused_srv;
 		std::ifstream sphere_vb_file(TEST_SCENE_PATH("Compiled/sphere.vb"), std::ios::in | std::ios::binary);
 		ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_vb_file, ResourceDataLoadingOption::ImmutableVB,
-			sphere_vb.GetAddressOf(), unused_srv.GetAddressOf());
+			sphere_vb.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
 		std::ifstream sphere_ib_file(TEST_SCENE_PATH("Compiled/sphere.ib"), std::ios::in | std::ios::binary);
 		ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_ib_file, ResourceDataLoadingOption::ImmutableIB,
-			sphere_ib.GetAddressOf(), unused_srv.GetAddressOf());
+			sphere_ib.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
 		modelSphere->SetData(std::move(sphere_vb), 32);
-		modelSphere->SetIndex(std::move(sphere_ib), 2);
+		modelSphere->SetIndex(std::move(sphere_ib), 4);
 	}
 
 	{

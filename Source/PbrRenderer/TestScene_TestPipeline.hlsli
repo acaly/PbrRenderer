@@ -26,7 +26,7 @@ struct PS_INPUT
 	float3 ViewDir : POSITION;
 };
 
-static const float3 Fresnel_F0 = float3(0.345, 0.369, 0.426);
+static const float3 Fresnel_F0 = float3(0.955, 0.638, 0.538);
 
 PS_INPUT VS(VS_INPUT input)
 {
@@ -43,7 +43,7 @@ PS_INPUT VS(VS_INPUT input)
 float4 PS(PS_INPUT input) : SV_Target
 {
 	//For diffuse
-	float3 diffuseColor = diffuseSkyMap.Sample(textureSampler, input.Normal).xyz * 3;
+	float3 diffuseColor = diffuseSkyMap.Sample(textureSampler, input.Normal).xyz * float3(1, 1, 1) / 3.14;
 
 	//For reflection
 	float3 l = -normalize(input.ViewDir);
@@ -52,7 +52,10 @@ float4 PS(PS_INPUT input) : SV_Target
 	float x_1_nl_2 = x_1_nl * x_1_nl;
 	float3 fresnel_factor = Fresnel_F0 + (float3(1, 1, 1) - Fresnel_F0) * x_1_nl_2 * x_1_nl_2 * x_1_nl;
 	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
-	float3 specularColor = specularSkyMap.Sample(textureSampler, reflectionDir).xyz * fresnel_factor * 3;
+	float3 specularColor = specularSkyMap.Sample(textureSampler, reflectionDir).xyz * fresnel_factor;
 
-	return float4(specularColor + diffuseColor, 1);
+	return float4((specularColor + diffuseColor) * 5, 1);
 }
+
+//Reference image generation
+//  output normal + view dir (before normalization) (both world space)

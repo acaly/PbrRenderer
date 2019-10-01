@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PbrSceneCompiler.Model
 {
-    public static class SegmentedCylinder
+    static class SegmentedCylinder
     {
         //All directions are assumed to be normalized
         public class Segment
@@ -23,33 +23,15 @@ namespace PbrSceneCompiler.Model
             public bool ContinuousNormal;
         }
 
-        public struct Vertex
-        {
-            public Vector3 Position;
-            public Vector3 Normal;
-            public Vector2 UV;
-        }
-
-        public struct Triangle
-        {
-            public int V1, V2, V3;
-        }
-
-        public class Model
-        {
-            public Vertex[] Vertices;
-            public Triangle[] Triangles;
-        }
-
         private class GeneratingModel
         {
             //public List<RayTracingVertex> rtv = new List<RayTracingVertex>();
-            public List<Vertex> rdv = new List<Vertex>();
+            public List<ModelVertex> rdv = new List<ModelVertex>();
             public List<Triangle> triangles = new List<Triangle>();
 
-            public Model ToModel()
+            public SingleMaterialModel ToModel()
             {
-                return new Model
+                return new SingleMaterialModel
                 {
                     Vertices = rdv.ToArray(),
                     Triangles = triangles.ToArray(),
@@ -58,7 +40,7 @@ namespace PbrSceneCompiler.Model
 
             public void UpdateNormal(int rdvIndex, Vector3 n)
             {
-                Vertex v = rdv[rdvIndex];
+                ModelVertex v = rdv[rdvIndex];
                 v.Normal = n / n.Length();
                 rdv[rdvIndex] = v;
             }
@@ -70,7 +52,7 @@ namespace PbrSceneCompiler.Model
             //    return ret;
             //}
 
-            public int AddRDV(Vertex v)
+            public int AddRDV(ModelVertex v)
             {
                 var ret = rdv.Count;
                 rdv.Add(v);
@@ -88,7 +70,7 @@ namespace PbrSceneCompiler.Model
             }
         }
 
-        public static Model Generate(List<Segment> segments)
+        public static SingleMaterialModel Generate(List<Segment> segments)
         {
             if (segments.Count < 2)
             {
@@ -272,7 +254,7 @@ namespace PbrSceneCompiler.Model
             {
                 var frac = seg.Rotation0Fraction + seg.RotationStepFraction * i;
                 var pos = CalculatePosition(seg, frac);
-                var rdx = model.AddRDV(new Vertex
+                var rdx = model.AddRDV(new ModelVertex
                 {
                     Position = pos,
                     Normal = CalculateNormal(segments, segIndex, frac, false),
@@ -287,7 +269,7 @@ namespace PbrSceneCompiler.Model
                     throw new ArgumentException("Invalid segment");
                 }
                 var pos = (model.rdv[output[0]].Position + model.rdv[output[output.Count - 1]].Position) / 2;
-                var rdx = model.AddRDV(new Vertex
+                var rdx = model.AddRDV(new ModelVertex
                 {
                     Position = pos,
                     Normal = CalculateNormal(segments, segIndex, 0, false),
@@ -307,7 +289,7 @@ namespace PbrSceneCompiler.Model
             else
             {
                 var zero = output.Where(ii => model.rdv[ii].UV.Y == 0).First();
-                var rdx = model.AddRDV(new Vertex
+                var rdx = model.AddRDV(new ModelVertex
                 {
                     Position = model.rdv[zero].Position,
                     Normal = model.rdv[zero].Normal,
@@ -337,7 +319,7 @@ namespace PbrSceneCompiler.Model
                 if (rdv.UV.Y == 0 && wrapPoint != -1)
                 {
                     if (wrapProcessed) throw new Exception();
-                    var rdv2 = new Vertex
+                    var rdv2 = new ModelVertex
                     {
                         Position = model.rdv[wrapPoint].Position,
                         Normal = rdv.Normal,

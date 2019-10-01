@@ -80,76 +80,9 @@ namespace PbrSceneCompiler.Model
             }
         }
 
-        public static void Generate(out SegmentedCylinder.Vertex[] vb, out short[] ib)
+        public static SingleMaterialModel Generate()
         {
-            var s = (float)Math.Sqrt(1f / 2);
-            var model = SegmentedCylinder.Generate(PostProcess(GenSphere(new Vector3(), new Vector3(0, 0, 1), new Vector3(1, 0, 0), 1, 0, 1, 1)));
-            vb = model.Vertices;
-            for (int i = 0; i < vb.Length; ++i)
-            {
-                var vv = vb[i];
-                vv.UV = new Vector2(vv.UV.Y, 1 - vv.UV.X);
-                vb[i] = vv;
-            }
-            List<short> ibList = new List<short>();
-            foreach (var tri in model.Triangles)
-            {
-                ibList.Add((short)tri.V1);
-                ibList.Add((short)tri.V2);
-                ibList.Add((short)tri.V3);
-            }
-            ib = ibList.ToArray();
-        }
-
-        public static void WriteSRD(string vbfile, string ibfile)
-        {
-            Generate(out var vb, out var ib);
-            {
-                var srd = new SRDFile(vbfile);
-                srd.WriteHeaders(new SRDFileHeader
-                {
-                    Magic = SRDFile.Magic[0],
-                    Format = 0,
-                    ArraySize = 1,
-                    MipLevel = 1,
-                }, new[] {
-                    new SRDSegmentHeader
-                    {
-                        Offset = 0,
-                        Width = (ushort)vb.Length,
-                        Height = 1,
-                        Depth = 1,
-                        Stride = 32,
-                        Slice = 0,
-                    },
-                });
-                srd.WriteOffset(0);
-                srd.Write(vb);
-                srd.Close();
-            }
-            {
-                var srd = new SRDFile(ibfile);
-                srd.WriteHeaders(new SRDFileHeader
-                {
-                    Magic = SRDFile.Magic[0],
-                    Format = 57 /* DXGI_FORMAT_R16_UINT */,
-                    ArraySize = 1,
-                    MipLevel = 1,
-                }, new[] {
-                    new SRDSegmentHeader
-                    {
-                        Offset = 0,
-                        Width = (ushort)ib.Length,
-                        Height = 1,
-                        Depth = 1,
-                        Stride = 2,
-                        Slice = 0,
-                    },
-                });
-                srd.WriteOffset(0);
-                srd.Write(ib);
-                srd.Close();
-            }
+            return SegmentedCylinder.Generate(PostProcess(GenSphere(new Vector3(), new Vector3(0, 0, 1), new Vector3(1, 0, 0), 1, 0, 1, 1)));
         }
     }
 }
