@@ -126,10 +126,10 @@ void PbrRenderer::TestScene::Initialize()
 		modelSphere = std::make_unique<Model>(renderingSystem);
 		ComPtr<ID3D11Buffer> sphere_vb, sphere_ib;
 		ComPtr<ID3D11ShaderResourceView> unused_srv;
-		std::ifstream sphere_vb_file(TEST_SCENE_PATH("Compiled/sphere.vb"), std::ios::in | std::ios::binary);
+		std::ifstream sphere_vb_file(TEST_SCENE_PATH("Compiled/bunny.vb"), std::ios::in | std::ios::binary);
 		ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_vb_file, ResourceDataLoadingOption::ImmutableVB,
 			sphere_vb.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
-		std::ifstream sphere_ib_file(TEST_SCENE_PATH("Compiled/sphere.ib"), std::ios::in | std::ios::binary);
+		std::ifstream sphere_ib_file(TEST_SCENE_PATH("Compiled/bunny.ib"), std::ios::in | std::ios::binary);
 		ResourceDataLoader::LoadBuffer(renderingSystem->device.Get(), sphere_ib_file, ResourceDataLoadingOption::ImmutableIB,
 			sphere_ib.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
 		modelSphere->SetData(std::move(sphere_vb), 32);
@@ -199,4 +199,18 @@ void PbrRenderer::TestScene::Render()
 void PbrRenderer::TestScene::OnEventBefore(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	camera.HandleWindowEvent(hwnd, umessage, wparam, lparam);
+	if (umessage == WM_KEYDOWN)
+	{
+		switch (wparam)
+		{
+		case '1':
+			camera.target = XMFLOAT3(-0.56f, 0.3f, 0.57f);
+			camera.SetYaw(1.6f);
+			camera.SetPitch(0.4f);
+			camera.SetLength(6.21f);
+			break;
+		default:
+			break;
+		}
+	}
 }

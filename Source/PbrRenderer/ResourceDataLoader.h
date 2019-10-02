@@ -8,7 +8,7 @@ namespace PbrRenderer
 	{
 		std::uint32_t Offset;
 		std::uint16_t Width;
-		std::uint16_t Height;
+		std::uint16_t Height; //For buffer, specify high 16 bit of the element size (low 16 bit in Width)
 		std::uint16_t Depth; //Used for cube texture (=6) and texture3d
 		std::uint16_t Stride;
 		std::uint32_t Slice;

@@ -58,10 +58,11 @@
     <Compile Include="Imaging\Transforming\SkyboxLambertianDiffuseFilter.cs" />
     <Compile Include="Imaging\Transforming\SkyboxUniformCircleFilter.cs" />
     <Compile Include="Model\ModelVertex.cs" />
-    <Compile Include="Model\ObjFileConverter.cs" />
+    <Compile Include="Model\ObjModelLoader.cs" />
     <Compile Include="Model\SegmentedCylinder.cs" />
     <Compile Include="Model\SingleMaterialModel.cs" />
     <Compile Include="Model\Sphere.cs" />
+    <Compile Include="Model\SwapModelCoordinate.cs" />
     <Compile Include="Model\Triangle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

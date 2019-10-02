@@ -32,8 +32,8 @@ void PbrRenderer::ResourceDataLoader::LoadBuffer(ID3D11Device* device, std::istr
 	{
 		throw std::exception("invalid Buffer file");
 	}
-	//CD3D11_TEXTURE2D_DESC desc((DXGI_FORMAT)header->Format, segments[0].Width, segments[0].Height, header->ArraySize, header->MipLevel);
-	CD3D11_BUFFER_DESC desc((UINT)(segments->Width * segments->Stride), 0, D3D11_USAGE_IMMUTABLE, 0, 0); //immutable
+	UINT count = segments->Width | segments->Height << 16;
+	CD3D11_BUFFER_DESC desc((UINT)(count * segments->Stride), 0, D3D11_USAGE_IMMUTABLE, 0, 0); //immutable
 	desc.StructureByteStride = segments->Stride;
 	CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	switch (option)
@@ -44,11 +44,11 @@ void PbrRenderer::ResourceDataLoader::LoadBuffer(ID3D11Device* device, std::istr
 		{
 			//structured buffer
 			desc.MiscFlags |= D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-			srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D_SRV_DIMENSION_BUFFEREX, DXGI_FORMAT_UNKNOWN, 0, segments->Width);
+			srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D_SRV_DIMENSION_BUFFEREX, DXGI_FORMAT_UNKNOWN, 0, count);
 		}
 		else
 		{
-			srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D_SRV_DIMENSION_BUFFER, (DXGI_FORMAT)header->Format, 0, segments->Width);
+			srvDesc = CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D_SRV_DIMENSION_BUFFER, (DXGI_FORMAT)header->Format, 0, count);
 		}
 		break;
 	case ResourceDataLoadingOption::ImmutableVB:

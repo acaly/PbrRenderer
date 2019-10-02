@@ -12,6 +12,16 @@ namespace PbrSceneCompiler.Model
         public ModelVertex[] Vertices;
         public Triangle[] Triangles;
 
+        private static ushort High(int val)
+        {
+            return (ushort)((uint)val >> 16);
+        }
+
+        private static ushort Low(int val)
+        {
+            return (ushort)((uint)val & 0xFFFF);
+        }
+
         public void WriteSRD(string vbfile, string ibfile)
         {
             {
@@ -26,8 +36,8 @@ namespace PbrSceneCompiler.Model
                     new SRDSegmentHeader
                     {
                         Offset = 0,
-                        Width = (ushort)Vertices.Length,
-                        Height = 1,
+                        Width = Low(Vertices.Length),
+                        Height = High(Vertices.Length),
                         Depth = 1,
                         Stride = 32,
                         Slice = 0,
@@ -49,8 +59,8 @@ namespace PbrSceneCompiler.Model
                     new SRDSegmentHeader
                     {
                         Offset = 0,
-                        Width = checked((ushort)(Triangles.Length * 3)),
-                        Height = 1,
+                        Width = Low(Triangles.Length * 3),
+                        Height = High(Triangles.Length * 3),
                         Depth = 1,
                         Stride = 4,
                         Slice = 0,

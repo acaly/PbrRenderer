@@ -1,0 +1,12 @@
+Stanford bunny
+=======
+bunny.obj is Stanford bunny model.
+Original: http://graphics.stanford.edu/data/3Dscanrep/ (Stanford Computer Graphics Laboratory)
+Downloaded from: http://www.prinmath.com/csci5229/OBJ/index.html (Principia Mathematica, Inc.)
+No commercial use.
+
+HDRI sky
+=======
+473-free-hdri-skies-com.hdr is a HDRI skybox.
+Downloaded from https://hdri-skies.com/ .
+Available for commercial use.
