@@ -62,7 +62,7 @@ namespace PbrSceneCompiler
                 model.WriteSRD(TestSceneCompiled("sphere.vb"), TestSceneCompiled("sphere.ib"));
             }
             {
-                var model = ObjModelLoader.Load(TestSceneResource("bunny.obj"));
+                var model = ObjModelLoader.Load(TestSceneResource("bunny.obj.dat"));
                 SwapModelCoordinate.SwapXZ(model);
                 model.WriteSRD(TestSceneCompiled("bunny.vb"), TestSceneCompiled("bunny.ib"));
             }
