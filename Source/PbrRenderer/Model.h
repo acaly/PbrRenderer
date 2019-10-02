@@ -59,6 +59,8 @@ namespace PbrRenderer
 
 		void Draw(ID3D11DeviceContext* dc);
 
+		static std::unique_ptr<Model> LoadFromFile(RenderingSystem* rs, LPCWSTR vb, LPCWSTR ib);
+
 	private:
 		RenderingSystem* const renderingSystem;
 		ComPtr<ID3D11Buffer> vertexBuffer;

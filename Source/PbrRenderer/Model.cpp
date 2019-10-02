@@ -1,5 +1,7 @@
 #include "Model.h"
 #include "RenderingSystem.h"
+#include "ResourceDataLoader.h"
+#include <fstream>
 
 void PbrRenderer::Model::LoadDataRaw(const void* data, int vertexSize, int count)
 {
@@ -38,4 +40,21 @@ void PbrRenderer::Model::Draw(ID3D11DeviceContext* dc)
 	{
 		dc->Draw(vertexCount, 0);
 	}
+}
+
+std::unique_ptr<PbrRenderer::Model> PbrRenderer::Model::LoadFromFile(RenderingSystem* rs, LPCWSTR vb, LPCWSTR ib)
+{
+	auto ret = std::make_unique<Model>(rs);
+	ComPtr<ID3D11Buffer> model_vb, model_ib;
+	ComPtr<ID3D11ShaderResourceView> unused_srv;
+	std::ifstream vb_file(vb, std::ios::in | std::ios::binary);
+	ResourceDataLoader::LoadBuffer(rs->device.Get(), vb_file, ResourceDataLoadingOption::ImmutableVB,
+		model_vb.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
+	std::ifstream ib_file(ib, std::ios::in | std::ios::binary);
+	ResourceDataLoader::LoadBuffer(rs->device.Get(), ib_file, ResourceDataLoadingOption::ImmutableIB,
+		model_ib.GetAddressOf(), unused_srv.ReleaseAndGetAddressOf());
+	ret->SetData(std::move(model_vb), 32);
+	ret->SetIndex(std::move(model_ib), 4); //TODO
+
+	return ret;
 }
