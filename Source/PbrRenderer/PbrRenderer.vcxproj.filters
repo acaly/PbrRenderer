@@ -76,12 +76,21 @@
     <None Include="TestScene_TestPipeline.hlsli">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="TestScene_NormalMapPipeline.hlsli">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="TestScene_TestPS.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
     <FxCompile Include="TestScene_TestVS.hlsl">
+      <Filter>Shader Files</Filter>
+    </FxCompile>
+    <FxCompile Include="TestScene_NormalMapPS.hlsl">
+      <Filter>Shader Files</Filter>
+    </FxCompile>
+    <FxCompile Include="TestScene_NormalMapVS.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
   </ItemGroup>

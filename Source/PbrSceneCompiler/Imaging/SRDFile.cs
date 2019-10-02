@@ -88,7 +88,7 @@ namespace PbrSceneCompiler.Imaging
         }
 
         [StructLayout(LayoutKind.Explicit)]
-        private struct HackWriteFloatArray
+        private struct HackWriteArray
         {
             [FieldOffset(0)] public byte[] ByteArray;
             [FieldOffset(0)] public Array SourceArray;
@@ -105,7 +105,7 @@ namespace PbrSceneCompiler.Imaging
             var len = Marshal.SizeOf<T>();
 
             //.NET does not allow us to write float[]. We make a fake byte[] using explicit-layout struct.
-            var conv = new HackWriteFloatArray
+            var conv = new HackWriteArray
             {
                 SourceArray = data
             };

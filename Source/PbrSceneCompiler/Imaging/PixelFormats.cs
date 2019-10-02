@@ -84,4 +84,47 @@ namespace PbrSceneCompiler.Imaging
             return Color.FromArgb(a, r, g, b);
         }
     }
+
+    class R32G32B32A32FNormalTransformer : ISoftwarePixelFormatTranform<R32G32B32A32F>
+    {
+        public uint DXGIFormat => 2 /* DXGI_FORMAT_R32G32B32A32_FLOAT */;
+
+        public R32G32B32A32F Add(R32G32B32A32F a, R32G32B32A32F b)
+        {
+            return new R32G32B32A32F
+            {
+                R = a.R + b.R,
+                G = a.G + b.G,
+                B = a.B + b.B,
+                A = Math.Max(a.A, b.A),
+            };
+        }
+
+        public R32G32B32A32F Scale(R32G32B32A32F val, float factor)
+        {
+            return new R32G32B32A32F
+            {
+                R = val.R * factor,
+                G = val.G * factor,
+                B = val.B * factor,
+                A = val.A,
+            };
+        }
+
+        public Color ToColor(R32G32B32A32F val)
+        {
+            //Normalize rgb in order to also apply to view dir map (which is not normalized).
+            var len = (float)Math.Sqrt(val.R * val.R + val.G * val.G + val.B * val.B);
+            if (len == 0) return Color.Black;
+            len = 1 / len;
+            val.R *= len;
+            val.G *= len;
+            val.B *= len;
+
+            var r = (int)Math.Min(255, (val.R / 2 + 0.5f) * 255);
+            var g = (int)Math.Min(255, (val.G / 2 + 0.5f) * 255);
+            var b = (int)Math.Min(255, (val.B / 2 + 0.5f) * 255);
+            return Color.FromArgb(255, r, g, b);
+        }
+    }
 }

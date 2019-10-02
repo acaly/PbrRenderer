@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -103,6 +104,19 @@ namespace PbrSceneCompiler.Imaging
             file.Write(images[4].RawData);
             file.Write(images[5].RawData);
             file.Close();
+        }
+
+        public unsafe void LoadRawDataFile(string filename)
+        {
+            var data = File.ReadAllBytes(filename);
+            fixed (byte* pdata = data)
+            {
+                fixed (T* pdest = RawData)
+                {
+                    byte* pdest2 = (byte*)pdest;
+                    Buffer.MemoryCopy(pdata, pdest2, sizeof(T) * RawData.Length, data.Length);
+                }
+            }
         }
     }
 }
