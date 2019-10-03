@@ -40,9 +40,15 @@ namespace PbrOfflineRenderer
                 {
                     for (int x = 0; x < 800; ++x)
                     {
-                        var viewDir = viewDirMap.GetPixel(x, y);
                         var normal = normalMap.GetPixel(x, y);
-                        var color = SkyboxHelper.SampleEquirectangularMap(skybox, new Vector3(normal.R, normal.G, normal.B));
+                        if (normal.R == 0 && normal.G == 0 && normal.B == 0) continue;
+                        var viewDir = viewDirMap.GetPixel(x, y);
+
+                        var n = new Vector3(normal.R, normal.G, normal.B);
+
+                        var e = Vector3.Normalize(-new Vector3(viewDir.R, viewDir.G, viewDir.B));
+                        var l = 2 * Vector3.Dot(n, e) * n - e;
+                        var color = SkyboxHelper.SampleEquirectangularMap(skybox, l);
                         var rgb = skybox.PixelTransformer.ToColor(color);
                         bitmap.SetPixel(x, y, rgb);
                     }

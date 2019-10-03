@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace PbrResourceUtils.Imaging.Sampling
 {
-    //Take samples around a directional 3D vector. The length of this direction or samples has no effect.
     public struct RectDirectionalSampler
     {
         public RectDirectionalSampler(Random rand, Vector3 center, float r, int n)

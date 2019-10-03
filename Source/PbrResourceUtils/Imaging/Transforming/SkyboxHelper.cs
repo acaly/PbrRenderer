@@ -26,15 +26,44 @@ namespace PbrResourceUtils.Imaging.Transforming
             }
         }
 
+        private static T GetImagePixel<T>(SoftwareImage<T> image, int x, int y) where T : unmanaged
+        {
+            x = (x + image.Width) % image.Width;
+            y = (y + image.Height) % image.Height;
+            return image.GetPixel(x, y);
+        }
+
+        private static T SampleLinear<T>(SoftwareImage<T> image, float x, float y) where T : unmanaged
+        {
+            float rx = x - 0.5f;
+            float ry = y - 0.5f;
+            int x0 = (int)Math.Floor(rx);
+            int y0 = (int)Math.Floor(ry);
+            int x1 = x0 + 1;
+            int y1 = y0 + 1;
+            float tx = rx - x0;
+            float ty = ry - y0;
+            var c00 = GetImagePixel(image, x0, y0);
+            var c10 = GetImagePixel(image, x1, y0);
+            var c01 = GetImagePixel(image, x0, y1);
+            var c11 = GetImagePixel(image, x1, y1);
+
+            var p = image.PixelTransformer;
+            var cc = p.Scale(c00, (1 - tx) * (1 - ty));
+            cc = p.Add(cc, p.Scale(c10, tx * (1 - ty)));
+            cc = p.Add(cc, p.Scale(c01, (1 - tx) * ty));
+            cc = p.Add(cc, p.Scale(c11, tx * ty));
+            return cc;
+        }
+
         public static T SampleEquirectangularMap<T>(SoftwareImage<T> image, Vector3 dir) where T : unmanaged
         {
             var th = Math.Atan2(dir.Y, dir.X) / Math.PI / 2;
             if (th < 0) th += 1;
-            var u = (int)Math.Floor(th * image.Width);
+            var u = (float)(th * image.Width);
             var xy = Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y);
-            var v = (int)Math.Floor(Math.Atan2(xy, dir.Z) / Math.PI * image.Height);
-            if (v == image.Height) v -= 1;
-            return image.GetPixel(u, v);
+            var v = (float)(Math.Atan2(xy, dir.Z) / Math.PI * image.Height);
+            return SampleLinear(image, u, v);
         }
     }
 }

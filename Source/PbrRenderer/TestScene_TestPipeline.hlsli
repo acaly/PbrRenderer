@@ -54,7 +54,8 @@ float4 PS(PS_INPUT input) : SV_Target
 	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
 	float3 specularColor = specularSkyMap.Sample(textureSampler, reflectionDir).xyz * fresnel_factor;
 
-	return float4((specularColor + diffuseColor) * 5, 1);
+	float3 finalColor = specularColor * 5 + diffuseColor * 1;
+	return float4(finalColor, 1);
 }
 
 //Reference image generation
