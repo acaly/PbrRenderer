@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Hdr
+namespace PbrResourceUtils.Imaging.Hdr
 {
-    class HdrImage : SoftwareImage<R32G32B32A32F>
+    public class HdrImage : SoftwareImage<R32G32B32A32F>
     {
         public HdrImage(int w, int h) : base(w, h, new R32G32B32A32FTransformer())
         {

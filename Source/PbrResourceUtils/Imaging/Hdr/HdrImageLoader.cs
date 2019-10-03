@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Hdr
+namespace PbrResourceUtils.Imaging.Hdr
 {
-    class HdrImageLoader
+    public class HdrImageLoader
     {
         public HdrImageLoader()
         {

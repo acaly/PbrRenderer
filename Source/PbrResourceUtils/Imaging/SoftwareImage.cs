@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging
+namespace PbrResourceUtils.Imaging
 {
-    interface ISoftwarePixelFormatTranform<T> where T : unmanaged
+    public interface ISoftwarePixelFormatTranform<T> where T : unmanaged
     {
         T Scale(T val, float factor);
         T Add(T a, T b);
@@ -17,7 +17,7 @@ namespace PbrSceneCompiler.Imaging
         Color ToColor(T val);
     }
 
-    class SoftwareImage<T> where T : unmanaged
+    public class SoftwareImage<T> where T : unmanaged
     {
         public SoftwareImage(int w, int h, ISoftwarePixelFormatTranform<T> p)
         {

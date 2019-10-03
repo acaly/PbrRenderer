@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    class SwapModelCoordinate
+    public class SwapModelCoordinate
     {
         public static void SwapXZ(SingleMaterialModel model)
         {

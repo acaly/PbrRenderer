@@ -5,9 +5,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Sampling
+namespace PbrResourceUtils.Imaging.Sampling
 {
-    struct CircleDirectionalSampler
+    public struct CircleDirectionalSampler
     {
         public CircleDirectionalSampler(Random rand, Vector3 center, float r, int n)
         {

@@ -5,9 +5,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    static class SegmentedCylinder
+    public static class SegmentedCylinder
     {
         //All directions are assumed to be normalized
         public class Segment

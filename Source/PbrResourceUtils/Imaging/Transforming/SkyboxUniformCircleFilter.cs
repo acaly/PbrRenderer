@@ -1,4 +1,4 @@
-﻿using PbrSceneCompiler.Imaging.Sampling;
+﻿using PbrResourceUtils.Imaging.Sampling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Transforming
+namespace PbrResourceUtils.Imaging.Transforming
 {
-    class SkyboxUniformCircleFilter<T> where T : unmanaged
+    public class SkyboxUniformCircleFilter<T> where T : unmanaged
     {
         private readonly SoftwareImage<T> _image;
 

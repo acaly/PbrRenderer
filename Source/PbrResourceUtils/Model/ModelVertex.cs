@@ -5,9 +5,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    struct ModelVertex
+    public struct ModelVertex
     {
         public Vector3 Position;
         public Vector3 Normal;

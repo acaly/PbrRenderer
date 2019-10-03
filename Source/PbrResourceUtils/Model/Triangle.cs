@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    struct Triangle
+    public struct Triangle
     {
         public int V1, V2, V3;
     }

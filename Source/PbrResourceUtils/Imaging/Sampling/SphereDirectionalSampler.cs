@@ -5,9 +5,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Sampling
+namespace PbrResourceUtils.Imaging.Sampling
 {
-    struct SphereDirectionalSampler
+    public struct SphereDirectionalSampler
     {
         public SphereDirectionalSampler(Random rand, Vector3 normalizedCenter, float th, int nLatitude)
         {

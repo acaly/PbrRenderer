@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging
+namespace PbrResourceUtils.Imaging
 {
-    struct R8G8B8A8
+    public struct R8G8B8A8
     {
         public byte R, G, B, A;
     }
 
-    class R8G8B8A8Transformer : ISoftwarePixelFormatTranform<R8G8B8A8>
+    public class R8G8B8A8Transformer : ISoftwarePixelFormatTranform<R8G8B8A8>
     {
         public uint DXGIFormat => 28 /* DXGI_FORMAT_R8G8B8A8_UNORM */;
 
@@ -44,12 +44,12 @@ namespace PbrSceneCompiler.Imaging
         }
     }
 
-    struct R32G32B32A32F
+    public struct R32G32B32A32F
     {
         public float R, G, B, A;
     }
 
-    class R32G32B32A32FTransformer : ISoftwarePixelFormatTranform<R32G32B32A32F>
+    public class R32G32B32A32FTransformer : ISoftwarePixelFormatTranform<R32G32B32A32F>
     {
         public uint DXGIFormat => 2 /* DXGI_FORMAT_R32G32B32A32_FLOAT */;
 
@@ -85,7 +85,7 @@ namespace PbrSceneCompiler.Imaging
         }
     }
 
-    class R32G32B32A32FNormalTransformer : ISoftwarePixelFormatTranform<R32G32B32A32F>
+    public class R32G32B32A32FNormalTransformer : ISoftwarePixelFormatTranform<R32G32B32A32F>
     {
         public uint DXGIFormat => 2 /* DXGI_FORMAT_R32G32B32A32_FLOAT */;
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Transforming
+namespace PbrResourceUtils.Imaging.Transforming
 {
-    class HalfSize<T> where T : unmanaged
+    public class HalfSize<T> where T : unmanaged
     {
         public HalfSize(SoftwareImage<T> image)
         {

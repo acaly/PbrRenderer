@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Scripting
+namespace PbrResourceUtils.Scripting
 {
-    class CSharpScriptLoader
+    public class CSharpScriptLoader
     {
         public static T Load<T>(string filename, string className)
         {

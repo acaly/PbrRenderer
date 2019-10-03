@@ -1,4 +1,4 @@
-﻿using PbrSceneCompiler.Imaging;
+﻿using PbrResourceUtils.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    class Sphere
+    public class Sphere
     {
         private static List<SegmentedCylinder.Segment> PostProcess(params IEnumerable<SegmentedCylinder.Segment>[] input)
         {

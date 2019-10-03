@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    static class ObjModelLoader
+    public static class ObjModelLoader
     {
         private class ObjModel
         {

@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging
+namespace PbrResourceUtils.Imaging
 {
-    struct SRDFileHeader
+    public struct SRDFileHeader
     {
         public uint Magic;
         public uint Format;
@@ -16,7 +16,7 @@ namespace PbrSceneCompiler.Imaging
         public ushort ArraySize;
     }
 
-    struct SRDSegmentHeader
+    public struct SRDSegmentHeader
     {
         public uint Offset;
         public ushort Width;
@@ -26,7 +26,7 @@ namespace PbrSceneCompiler.Imaging
         public uint Slice;
     }
 
-    class SRDFile
+    public class SRDFile
     {
         public static uint[] Magic = new uint[]
         {

@@ -1,4 +1,4 @@
-﻿using PbrSceneCompiler.Imaging.Sampling;
+﻿using PbrResourceUtils.Imaging.Sampling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Imaging.Transforming
+namespace PbrResourceUtils.Imaging.Transforming
 {
-    class SkyboxLambertianDiffuseFilter<T> where T : unmanaged
+    public class SkyboxLambertianDiffuseFilter<T> where T : unmanaged
     {
         private readonly SoftwareImage<T> _image;
 

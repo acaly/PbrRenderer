@@ -1,13 +1,13 @@
-﻿using PbrSceneCompiler.Imaging;
+﻿using PbrResourceUtils.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PbrSceneCompiler.Model
+namespace PbrResourceUtils.Model
 {
-    class SingleMaterialModel
+    public class SingleMaterialModel
     {
         public ModelVertex[] Vertices;
         public Triangle[] Triangles;

@@ -1,7 +1,7 @@
-﻿using PbrSceneCompiler.Imaging;
-using PbrSceneCompiler.Imaging.Hdr;
-using PbrSceneCompiler.Imaging.Transforming;
-using PbrSceneCompiler.Model;
+﻿using PbrResourceUtils.Imaging;
+using PbrResourceUtils.Imaging.Hdr;
+using PbrResourceUtils.Imaging.Transforming;
+using PbrResourceUtils.Model;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;

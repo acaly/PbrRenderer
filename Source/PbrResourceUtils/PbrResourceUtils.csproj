@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E39EDED-449A-4FCC-96D7-A69D421F6C2E}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>PbrSceneCompiler</RootNamespace>
-    <AssemblyName>PbrSceneCompiler</AssemblyName>
+    <ProjectGuid>{0AB36D18-5E5E-496B-8CBF-EA30644D17A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PbrResourceUtils</RootNamespace>
+    <AssemblyName>PbrResourceUtils</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,11 +21,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -48,17 +45,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Imaging\Hdr\HdrImage.cs" />
+    <Compile Include="Imaging\Hdr\HdrImageLoader.cs" />
+    <Compile Include="Imaging\PixelFormats.cs" />
+    <Compile Include="Imaging\Sampling\CircleDirectionalSampler.cs" />
+    <Compile Include="Imaging\Sampling\RectDirectionalSampler.cs" />
+    <Compile Include="Imaging\Sampling\SphereDirectionalSampler.cs" />
+    <Compile Include="Imaging\SoftwareImage.cs" />
+    <Compile Include="Imaging\SRDFile.cs" />
+    <Compile Include="Imaging\Transforming\HalfSize.cs" />
+    <Compile Include="Imaging\Transforming\SkyboxLambertianDiffuseFilter.cs" />
+    <Compile Include="Imaging\Transforming\SkyboxUniformCircleFilter.cs" />
+    <Compile Include="Model\ModelVertex.cs" />
+    <Compile Include="Model\ObjModelLoader.cs" />
+    <Compile Include="Model\SegmentedCylinder.cs" />
+    <Compile Include="Model\SingleMaterialModel.cs" />
+    <Compile Include="Model\Sphere.cs" />
+    <Compile Include="Model\SwapModelCoordinate.cs" />
+    <Compile Include="Model\Triangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PbrResourceUtils\PbrResourceUtils.csproj">
-      <Project>{0ab36d18-5e5e-496b-8cbf-ea30644d17a2}</Project>
-      <Name>PbrResourceUtils</Name>
-    </ProjectReference>
+    <Compile Include="Scripting\CSharpScriptLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
