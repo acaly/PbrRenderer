@@ -46,7 +46,7 @@ namespace PbrResourceUtils.Imaging.Transforming
                             var color = SkyboxHelper.SampleEquirectangularMap(_image, sampleDir);
                             total = p.Add(total, p.Scale(color, Vector3.Dot(center, sampleDir)));
                         }
-                        faces[z].GetPixel(x, y) = p.Scale(total, 1f / sampler.SampleCount);
+                        faces[z].GetPixel(x, y) = p.Scale(total, 1f / sampler.SampleCount / (float)Math.PI);
                     }
                 }
             }

@@ -43,7 +43,7 @@ PS_INPUT VS(VS_INPUT input)
 float4 PS(PS_INPUT input) : SV_Target
 {
 	//For diffuse
-	float3 diffuseColor = diffuseSkyMap.Sample(textureSampler, input.Normal).xyz * float3(1, 1, 1) / 3.14;
+	float3 diffuseColor = diffuseSkyMap.Sample(textureSampler, input.Normal).xyz * float3(1, 1, 1);
 
 	//For reflection
 	float3 l = -normalize(input.ViewDir);
@@ -54,7 +54,7 @@ float4 PS(PS_INPUT input) : SV_Target
 	float3 reflectionDir = reflect(normalize(input.ViewDir), input.Normal);
 	float3 specularColor = specularSkyMap.Sample(textureSampler, reflectionDir).xyz * fresnel_factor;
 
-	float3 finalColor = specularColor * 5 + diffuseColor * 1;
+	float3 finalColor = diffuseColor * 5 + specularColor * 5;
 	return float4(finalColor, 1);
 }
 
