@@ -28,18 +28,9 @@ namespace PbrSceneCompiler
 
         static void Main(string[] args)
         {
-            //TODO move to separate C# project
-            //{
-            //    var conv = new SoftwareImage<R32G32B32A32F>(800, 600, new R32G32B32A32FNormalTransformer());
-            //    conv.LoadRawDataFile(TestSceneCompiled("OutputViewDir.raw"));
-            //    conv.ToBitmap().Save(TestSceneCompiled("OutputViewDir.png"));
-            //}
-            //return;
-
             //Convert skybox texture.
-            using (var file = File.OpenRead(TestSceneResource("473-free-hdri-skies-com.hdr")))
             {
-                SoftwareImage<R32G32B32A32F> image = new HdrImageLoader().Read(file);
+                SoftwareImage<R32G32B32A32F> image = HdrImageLoader.Read(TestSceneResource("473-free-hdri-skies-com.hdr"));
                 {
                     var cubeImages = new SkyboxUniformCircleFilter<R32G32B32A32F>(image).Generate(32);
                     SoftwareImage<R32G32B32A32F>.WriteSRDFileCube(TestSceneCompiled("sphere_cube_specular.srd"), cubeImages);

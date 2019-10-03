@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbrSceneCompiler", "PbrScen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbrResourceUtils", "PbrResourceUtils\PbrResourceUtils.csproj", "{0AB36D18-5E5E-496B-8CBF-EA30644D17A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbrOfflineRenderer", "PbrOfflineRenderer\PbrOfflineRenderer.csproj", "{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,18 @@ Global
 		{0AB36D18-5E5E-496B-8CBF-EA30644D17A2}.Release|x64.Build.0 = Release|Any CPU
 		{0AB36D18-5E5E-496B-8CBF-EA30644D17A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{0AB36D18-5E5E-496B-8CBF-EA30644D17A2}.Release|x86.Build.0 = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|x64.Build.0 = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Debug|x86.Build.0 = Debug|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|x64.ActiveCfg = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|x64.Build.0 = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|x86.ActiveCfg = Release|Any CPU
+		{3FCF6273-ECB3-462B-A77B-2FE86FEA888C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,7 +9,7 @@ namespace PbrResourceUtils.Imaging.Hdr
 {
     public class HdrImageLoader
     {
-        public HdrImageLoader()
+        private HdrImageLoader()
         {
         }
 
@@ -19,12 +19,21 @@ namespace PbrResourceUtils.Imaging.Hdr
         private Stream _stream;
         private HdrImage _data;
 
-        public HdrImage Read(Stream stream)
+        public static HdrImage Read(Stream stream)
         {
-            _stream = stream;
-            ReadHeader();
-            ReadData();
-            return _data;
+            var reader = new HdrImageLoader();
+            reader._stream = stream;
+            reader.ReadHeader();
+            reader.ReadData();
+            return reader._data;
+        }
+
+        public static HdrImage Read(string filename)
+        {
+            using (var file = File.OpenRead(filename))
+            {
+                return Read(file);
+            }
         }
 
         private void ReadHeader()
