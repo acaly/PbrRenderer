@@ -30,6 +30,45 @@ namespace PbrOfflineRenderer
 
         private static ThreadLocal<Random> _rand = new ThreadLocal<Random>(() => new Random());
 
+        private static readonly float F0 = 0.3f;
+        private const float Alpha = 0.4f;
+
+        private static float DoubleDot(Vector3 a, Vector3 b)
+        {
+            float ax = a.X, ay = a.Y, az = a.Z;
+            float bx = b.X, by = b.Y, bz = b.Z;
+            return ax * bx + ay * by + az * bz;
+        }
+
+        private static float Fresnel(Vector3 n, Vector3 l)
+        {
+            var dot_nl = DoubleDot(n, l);
+            if (dot_nl < 0) return 0;
+            var s = 1 - dot_nl;
+            var dot_nl_5 = s * s;
+            dot_nl_5 *= dot_nl_5;
+            dot_nl_5 *= s;
+            return F0 + (1 - F0) * dot_nl_5;
+        }
+
+        private static float GGX(Vector3 n, Vector3 m)
+        {
+            var dot_nm = DoubleDot(n, m);
+            if (dot_nm <= 0) return 0;
+            var d = 1 / (1 + dot_nm * dot_nm * (Alpha * Alpha - 1));
+            return Alpha * Alpha / (float)Math.PI * d * d;
+        }
+
+        private static float BRDF(Vector3 n, Vector3 l, Vector3 e)
+        {
+            var h = Vector3.Normalize(l + e);
+            var dot_nl = Math.Abs(DoubleDot(n, l));
+            var dot_ne = Math.Abs(DoubleDot(n, e));
+            var lerp1 = 2 * dot_nl * dot_ne;
+            var lerp2 = dot_nl + dot_ne;
+            return Fresnel(h, l) * GGX(n, h) * 0.5f / (lerp1 * (1 - Alpha) + lerp2 * Alpha);
+        }
+
         static void Main(string[] args)
         {
             var normalMap = new SoftwareImage<R32G32B32A32F>(800, 600, new R32G32B32A32FTransformer());
@@ -44,10 +83,13 @@ namespace PbrOfflineRenderer
                 skyboxSpecular = new HalfSize<R32G32B32A32F>(skyboxSpecular).Generate();
                 skyboxSpecular = new HalfSize<R32G32B32A32F>(skyboxSpecular).Generate();
                 skyboxSpecular = new HalfSize<R32G32B32A32F>(skyboxSpecular).Generate();
+                skyboxSpecular = new HalfSize<R32G32B32A32F>(skyboxSpecular).Generate();
+                skyboxSpecular = new HalfSize<R32G32B32A32F>(skyboxSpecular).Generate();
             }
 
             SoftwareImage<R32G32B32A32F> skyboxDiffuse = skybox;
             {
+                skyboxDiffuse = new HalfSize<R32G32B32A32F>(skyboxDiffuse).Generate();
                 skyboxDiffuse = new HalfSize<R32G32B32A32F>(skyboxDiffuse).Generate();
                 skyboxDiffuse = new HalfSize<R32G32B32A32F>(skyboxDiffuse).Generate();
                 skyboxDiffuse = new HalfSize<R32G32B32A32F>(skyboxDiffuse).Generate();
@@ -62,7 +104,6 @@ namespace PbrOfflineRenderer
             var bitmap = new SoftwareImage<R8G8B8A8>(800, 600, new R8G8B8A8Transformer());
 
             Parallel.For(0, 600, (int y) =>
-            //for (int y = 0; y < 600; ++y)
             {
                 var rand = _rand.Value;
                 for (int x = 0; x < 800; ++x)
@@ -73,17 +114,29 @@ namespace PbrOfflineRenderer
 
                     var n = new Vector3(normal.R, normal.G, normal.B);
                     var e = Vector3.Normalize(-new Vector3(viewDir.R, viewDir.G, viewDir.B));
-                    var l = 2 * Vector3.Dot(n, e) * n - e;
+                    var l = Vector3.Normalize(2 * Vector3.Dot(n, e) * n - e);
 
                     R32G32B32A32F color = default;
 
-                    //Perfect reflection
+                    //Specular
                     {
-                        color = p.Add(color, SkyboxHelper.SampleEquirectangularMap(skyboxSpecular, l));
+                        //color = p.Add(color, SkyboxHelper.SampleEquirectangularMap(skyboxSpecular, l));
+
+                        const int SpecularSampleCount = 40;
+                        var sampler = new SphereDirectionalSampler(rand, l, (float)Math.PI / 2, SpecularSampleCount);
+                        R32G32B32A32F total = default;
+                        for (int sample = 0; sample < sampler.SampleCount; ++sample)
+                        {
+                            var sampleDir = sampler.Sample(sample);
+                            if (Vector3.Dot(sampleDir, n) < 0) continue;
+                            var cc = SkyboxHelper.SampleEquirectangularMap(skyboxSpecular, sampleDir);
+                            total = p.Add(total, p.Scale(cc, Vector3.Dot(n, sampleDir) * (float)BRDF(n, sampleDir, e)));
+                        }
+                        color = p.Add(color, p.Scale(total, 1f / sampler.SampleCount * 5));
                     }
                     //Diffuse
                     {
-                        const int DiffuseSampleCount = 20;
+                        const int DiffuseSampleCount = 10;
                         var sampler = new SphereDirectionalSampler(rand, n, (float)Math.PI / 2, DiffuseSampleCount);
                         R32G32B32A32F total = default;
                         for (int sample = 0; sample < sampler.SampleCount; ++sample)
@@ -92,7 +145,7 @@ namespace PbrOfflineRenderer
                             var cc = SkyboxHelper.SampleEquirectangularMap(skyboxDiffuse, sampleDir);
                             total = p.Add(total, p.Scale(cc, Vector3.Dot(n, sampleDir) / (float)Math.PI));
                         }
-                        color = p.Add(color, p.Scale(total, 1f / sampler.SampleCount * 5));
+                        color = p.Add(color, p.Scale(total, 1f / sampler.SampleCount * 0));
                     }
 
                     var rgb = p.ToColor(color);
